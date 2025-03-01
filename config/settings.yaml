@@ -1,0 +1,35 @@
+# Agentic SOC Configuration
+llm:
+  provider: "openai"
+  model: "gpt-4"
+  temperature: 0.2
+  max_tokens: 2000
+
+severity_thresholds:
+  critical: 90
+  high: 70
+  medium: 40
+  low: 0
+
+agents:
+  triage:
+    enabled: true
+    auto_escalate_critical: true
+  investigator:
+    enabled: true
+    max_depth: 5
+    enrich_iocs: true
+  responder:
+    enabled: true
+    auto_respond: false
+    require_approval: true
+
+alert_sources:
+  - cloudtrail
+  - sentinel
+  - guardduty
+  - generic
+
+reporting:
+  output_dir: "./reports"
+  format: "json"
