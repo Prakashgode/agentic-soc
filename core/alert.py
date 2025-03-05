@@ -79,3 +79,15 @@ class TriageResult:
     reasoning: str
     recommended_actions: list = field(default_factory=list)
     mitre_mapping: dict = field(default_factory=dict)
+
+
+@dataclass
+class InvestigationResult:
+    alert_id: str
+    findings: list = field(default_factory=list)
+    enriched_iocs: list = field(default_factory=list)
+    timeline: list = field(default_factory=list)
+    risk_assessment: str = ""
+    root_cause: str = ""
+    affected_scope: list = field(default_factory=list)
+    recommendations: list = field(default_factory=list)
