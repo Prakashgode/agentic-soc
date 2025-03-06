@@ -1,3 +1,4 @@
+from typing import Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -91,3 +92,15 @@ class InvestigationResult:
     root_cause: str = ""
     affected_scope: list = field(default_factory=list)
     recommendations: list = field(default_factory=list)
+
+
+@dataclass
+class ResponseAction:
+    action_id: str
+    action_type: str
+    description: str
+    target: str
+    status: str = "pending"
+    requires_approval: bool = True
+    executed_at: Optional[str] = None
+    result: str = ""

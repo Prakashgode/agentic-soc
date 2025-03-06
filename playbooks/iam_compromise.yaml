@@ -1,0 +1,50 @@
+# Playbook: IAM Credential Compromise
+
+name: iam_credential_compromise
+description: Response playbook for compromised IAM credentials
+severity_trigger: high
+mitre_techniques:
+  - T1078  # Valid Accounts
+  - T1098  # Account Manipulation
+
+steps:
+  - name: contain
+    actions:
+      - action: attach_deny_policy
+        target: compromised_user
+        description: "Attach inline deny-all policy to prevent further access"
+      - action: deactivate_access_keys
+        target: compromised_user
+        description: "Deactivate all access keys for the compromised user"
+
+  - name: investigate
+    actions:
+      - action: pull_cloudtrail_logs
+        target: compromised_user
+        timeframe: "24h"
+        description: "Pull CloudTrail events for the compromised identity"
+      - action: check_new_resources
+        target: account
+        description: "Check for new IAM users, roles, or policies"
+
+  - name: eradicate
+    actions:
+      - action: delete_unauthorized_users
+        target: findings
+        description: "Remove any unauthorized IAM users created by attacker"
+      - action: remove_backdoor_policies
+        target: findings
+        description: "Remove attacker-created policies or roles"
+
+  - name: recover
+    actions:
+      - action: rotate_credentials
+        target: compromised_user
+        description: "Generate new access keys and update applications"
+      - action: enable_mfa
+        target: compromised_user
+        description: "Enforce MFA on the account"
+
+# TODO: boto3 execution
+# TODO: Slack notification
+# TODO: evidence collection step

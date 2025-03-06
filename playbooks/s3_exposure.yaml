@@ -1,0 +1,47 @@
+# Playbook: S3 Bucket Public Exposure
+
+name: s3_public_exposure
+description: Response playbook for publicly exposed S3 buckets
+severity_trigger: critical
+mitre_techniques:
+  - T1537  # Transfer Data to Cloud Account
+  - T1530  # Data from Cloud Storage
+
+steps:
+  - name: contain
+    actions:
+      - action: block_public_access
+        target: affected_bucket
+        description: "Enable S3 Block Public Access on the bucket"
+      - action: revert_bucket_policy
+        target: affected_bucket
+        description: "Remove the public access policy statement"
+
+  - name: investigate
+    actions:
+      - action: check_access_logs
+        target: affected_bucket
+        timeframe: "48h"
+        description: "Review S3 access logs for unauthorized data access"
+      - action: check_data_classification
+        target: affected_bucket
+        description: "Identify what data was exposed"
+
+  - name: eradicate
+    actions:
+      - action: apply_scp
+        target: organization
+        description: "Apply SCP to prevent future public bucket policies"
+
+  - name: recover
+    actions:
+      - action: enable_versioning
+        target: affected_bucket
+        description: "Enable versioning if not already active"
+      - action: enable_encryption
+        target: affected_bucket
+        description: "Ensure SSE-S3 or SSE-KMS encryption is enabled"
+
+# TODO: automated S3 access log analysis
+# TODO: data classification scanning
+# TODO: notify data owners
