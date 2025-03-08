@@ -1,0 +1,107 @@
+[
+  {
+    "alert_id": "CT-2024-001",
+    "title": "Unauthorized IAM User Creation from External IP",
+    "description": "CloudTrail detected iam:CreateUser API call from IP 198.51.100.23 which is not in any known allowlist. The newly created user was assigned AdministratorAccess policy.",
+    "source": "cloudtrail",
+    "severity": "high",
+    "timestamp": "2024-01-15T08:23:01Z",
+    "region": "us-east-1",
+    "account_id": "123456789012",
+    "iocs": ["198.51.100.23", "svc-backup-admin"],
+    "mitre_tactics": ["Initial Access", "Privilege Escalation"],
+    "mitre_techniques": ["T1078", "T1098"],
+    "affected_resources": ["arn:aws:iam::123456789012:user/svc-backup-admin"],
+    "raw_data": {
+      "eventName": "CreateUser",
+      "sourceIPAddress": "198.51.100.23",
+      "userAgent": "python-requests/2.28.0",
+      "requestParameters": {
+        "userName": "svc-backup-admin"
+      },
+      "responseElements": {
+        "user": {
+          "userName": "svc-backup-admin",
+          "userId": "AIDAEXAMPLE123"
+        }
+      }
+    }
+  },
+  {
+    "alert_id": "GD-2024-002",
+    "title": "S3 Bucket Policy Changed to Public Access",
+    "description": "GuardDuty detected that S3 bucket 'prod-customer-data' had its bucket policy modified to allow public read access from principal '*'.",
+    "source": "guardduty",
+    "severity": "critical",
+    "timestamp": "2024-01-15T10:45:22Z",
+    "region": "us-east-1",
+    "account_id": "123456789012",
+    "iocs": ["203.0.113.45"],
+    "mitre_tactics": ["Exfiltration", "Collection"],
+    "mitre_techniques": ["T1537", "T1530"],
+    "affected_resources": ["arn:aws:s3:::prod-customer-data"],
+    "raw_data": {
+      "eventName": "PutBucketPolicy",
+      "sourceIPAddress": "203.0.113.45",
+      "requestParameters": {
+        "bucketName": "prod-customer-data",
+        "policy": "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::prod-customer-data/*\"}]}"
+      }
+    }
+  },
+  {
+    "alert_id": "SN-2024-003",
+    "title": "Multiple Failed SSH Login Attempts Followed by Success",
+    "description": "Microsoft Sentinel detected 47 failed SSH login attempts from IP 192.0.2.100 against EC2 instance i-0abc123def456, followed by a successful login.",
+    "source": "sentinel",
+    "severity": "high",
+    "timestamp": "2024-01-15T14:12:08Z",
+    "region": "us-west-2",
+    "account_id": "123456789012",
+    "iocs": ["192.0.2.100"],
+    "mitre_tactics": ["Credential Access", "Initial Access"],
+    "mitre_techniques": ["T1110", "T1078"],
+    "affected_resources": ["i-0abc123def456"],
+    "raw_data": {
+      "failed_attempts": 47,
+      "successful_login": true,
+      "source_ip": "192.0.2.100",
+      "target_instance": "i-0abc123def456",
+      "username": "ec2-user",
+      "time_span_minutes": 12
+    }
+  },
+  {
+    "alert_id": "CT-2024-004",
+    "title": "Security Group Modified to Allow All Inbound Traffic",
+    "description": "CloudTrail detected AuthorizeSecurityGroupIngress call that added 0.0.0.0/0 on all ports to a production security group.",
+    "source": "cloudtrail",
+    "severity": "medium",
+    "timestamp": "2024-01-15T16:30:45Z",
+    "region": "us-east-1",
+    "account_id": "123456789012",
+    "iocs": [],
+    "mitre_tactics": ["Defense Evasion", "Persistence"],
+    "mitre_techniques": ["T1562"],
+    "affected_resources": ["sg-0abc123def456789"],
+    "raw_data": {
+      "eventName": "AuthorizeSecurityGroupIngress",
+      "sourceIPAddress": "10.0.1.50",
+      "userIdentity": {
+        "type": "AssumedRole",
+        "arn": "arn:aws:sts::123456789012:assumed-role/DevOps-Role/developer1"
+      },
+      "requestParameters": {
+        "groupId": "sg-0abc123def456789",
+        "ipPermissions": {
+          "items": [
+            {
+              "ipProtocol": "-1",
+              "ipRanges": {"items": [{"cidrIp": "0.0.0.0/0"}]}
+            }
+          ]
+        }
+      }
+    }
+  }
+]
