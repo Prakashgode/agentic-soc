@@ -62,6 +62,7 @@ class Alert:
     @classmethod
     def from_dict(cls, data: dict) -> "Alert":
         data = data.copy()
+        # guardduty alerts use eventTime instead of eventTimestamp
         # coerce string values to enums
         if "severity" in data:
             data["severity"] = Severity(data["severity"])

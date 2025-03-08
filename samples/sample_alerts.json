@@ -8,10 +8,21 @@
     "timestamp": "2024-01-15T08:23:01Z",
     "region": "us-east-1",
     "account_id": "123456789012",
-    "iocs": ["198.51.100.23", "svc-backup-admin"],
-    "mitre_tactics": ["Initial Access", "Privilege Escalation"],
-    "mitre_techniques": ["T1078", "T1098"],
-    "affected_resources": ["arn:aws:iam::123456789012:user/svc-backup-admin"],
+    "iocs": [
+      "198.51.100.23",
+      "svc-backup-admin"
+    ],
+    "mitre_tactics": [
+      "Initial Access",
+      "Privilege Escalation"
+    ],
+    "mitre_techniques": [
+      "T1078",
+      "T1098"
+    ],
+    "affected_resources": [
+      "arn:aws:iam::123456789012:user/svc-backup-admin"
+    ],
     "raw_data": {
       "eventName": "CreateUser",
       "sourceIPAddress": "198.51.100.23",
@@ -36,17 +47,28 @@
     "timestamp": "2024-01-15T10:45:22Z",
     "region": "us-east-1",
     "account_id": "123456789012",
-    "iocs": ["203.0.113.45"],
-    "mitre_tactics": ["Exfiltration", "Collection"],
-    "mitre_techniques": ["T1537", "T1530"],
-    "affected_resources": ["arn:aws:s3:::prod-customer-data"],
+    "iocs": [
+      "203.0.113.45"
+    ],
+    "mitre_tactics": [
+      "Exfiltration",
+      "Collection"
+    ],
+    "mitre_techniques": [
+      "T1537",
+      "T1530"
+    ],
+    "affected_resources": [
+      "arn:aws:s3:::prod-customer-data"
+    ],
     "raw_data": {
       "eventName": "PutBucketPolicy",
       "sourceIPAddress": "203.0.113.45",
       "requestParameters": {
         "bucketName": "prod-customer-data",
         "policy": "{\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::prod-customer-data/*\"}]}"
-      }
+      },
+      "eventTime": "2024-01-15T10:45:22Z"
     }
   },
   {
@@ -58,10 +80,20 @@
     "timestamp": "2024-01-15T14:12:08Z",
     "region": "us-west-2",
     "account_id": "123456789012",
-    "iocs": ["192.0.2.100"],
-    "mitre_tactics": ["Credential Access", "Initial Access"],
-    "mitre_techniques": ["T1110", "T1078"],
-    "affected_resources": ["i-0abc123def456"],
+    "iocs": [
+      "192.0.2.100"
+    ],
+    "mitre_tactics": [
+      "Credential Access",
+      "Initial Access"
+    ],
+    "mitre_techniques": [
+      "T1110",
+      "T1078"
+    ],
+    "affected_resources": [
+      "i-0abc123def456"
+    ],
     "raw_data": {
       "failed_attempts": 47,
       "successful_login": true,
@@ -81,9 +113,16 @@
     "region": "us-east-1",
     "account_id": "123456789012",
     "iocs": [],
-    "mitre_tactics": ["Defense Evasion", "Persistence"],
-    "mitre_techniques": ["T1562"],
-    "affected_resources": ["sg-0abc123def456789"],
+    "mitre_tactics": [
+      "Defense Evasion",
+      "Persistence"
+    ],
+    "mitre_techniques": [
+      "T1562"
+    ],
+    "affected_resources": [
+      "sg-0abc123def456789"
+    ],
     "raw_data": {
       "eventName": "AuthorizeSecurityGroupIngress",
       "sourceIPAddress": "10.0.1.50",
@@ -97,7 +136,13 @@
           "items": [
             {
               "ipProtocol": "-1",
-              "ipRanges": {"items": [{"cidrIp": "0.0.0.0/0"}]}
+              "ipRanges": {
+                "items": [
+                  {
+                    "cidrIp": "0.0.0.0/0"
+                  }
+                ]
+              }
             }
           ]
         }
