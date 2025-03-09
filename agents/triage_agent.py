@@ -1,5 +1,6 @@
 import json
 from core.alert import Alert, Severity, TriageResult
+from core.llm import LLMClient, MockLLMClient
 
 TRIAGE_SYSTEM_PROMPT = """You are an expert SOC analyst performing alert triage. Given a security alert, analyze it and return a JSON response with:
 
@@ -23,10 +24,8 @@ class TriageAgent:
 
     def __init__(self, llm_client=None, use_mock=False):
         if use_mock:
-            from core.llm import MockLLMClient
             self.llm = MockLLMClient()
         else:
-            from core.llm import LLMClient
             self.llm = llm_client or LLMClient()
 
     def triage(self, alert: Alert) -> TriageResult:
@@ -45,6 +44,11 @@ class TriageAgent:
             recommended_actions=result.get("recommended_actions", []),
             mitre_mapping=result.get("mitre_mapping", {}),
         )
+
+    def batch_triage(self, alerts: list[Alert]) -> list[TriageResult]:
+        results = [self.triage(alert) for alert in alerts]
+        results.sort(key=lambda r: r.severity_score, reverse=True)
+        return results
 
     def _build_prompt(self, alert: Alert) -> str:
         return f"""Analyze this security alert:
