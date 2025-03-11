@@ -1,7 +1,7 @@
-from typing import Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 
 class Severity(Enum):
@@ -18,6 +18,7 @@ class AlertStatus(Enum):
     INVESTIGATING = "investigating"
     RESPONDED = "responded"
     CLOSED = "closed"
+    FALSE_POSITIVE = "false_positive"
 
 
 @dataclass
@@ -62,7 +63,6 @@ class Alert:
     @classmethod
     def from_dict(cls, data: dict) -> "Alert":
         data = data.copy()
-        # guardduty alerts use eventTime instead of eventTimestamp
         # coerce string values to enums
         if "severity" in data:
             data["severity"] = Severity(data["severity"])
@@ -82,6 +82,18 @@ class TriageResult:
     recommended_actions: list = field(default_factory=list)
     mitre_mapping: dict = field(default_factory=dict)
 
+    def to_dict(self) -> dict:
+        return {
+            "alert_id": self.alert_id,
+            "severity_score": self.severity_score,
+            "assigned_severity": self.assigned_severity.value,
+            "is_false_positive": self.is_false_positive,
+            "confidence": self.confidence,
+            "reasoning": self.reasoning,
+            "recommended_actions": self.recommended_actions,
+            "mitre_mapping": self.mitre_mapping,
+        }
+
 
 @dataclass
 class InvestigationResult:
@@ -94,6 +106,18 @@ class InvestigationResult:
     affected_scope: list = field(default_factory=list)
     recommendations: list = field(default_factory=list)
 
+    def to_dict(self) -> dict:
+        return {
+            "alert_id": self.alert_id,
+            "findings": self.findings,
+            "enriched_iocs": self.enriched_iocs,
+            "timeline": self.timeline,
+            "risk_assessment": self.risk_assessment,
+            "root_cause": self.root_cause,
+            "affected_scope": self.affected_scope,
+            "recommendations": self.recommendations,
+        }
+
 
 @dataclass
 class ResponseAction:
@@ -105,3 +129,15 @@ class ResponseAction:
     requires_approval: bool = True
     executed_at: Optional[str] = None
     result: str = ""
+
+    def to_dict(self) -> dict:
+        return {
+            "action_id": self.action_id,
+            "action_type": self.action_type,
+            "description": self.description,
+            "target": self.target,
+            "status": self.status,
+            "requires_approval": self.requires_approval,
+            "executed_at": self.executed_at,
+            "result": self.result,
+        }

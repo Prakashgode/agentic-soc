@@ -1,5 +1,6 @@
 import json
 from core.alert import Alert, InvestigationResult, TriageResult
+from core.llm import LLMClient, MockLLMClient
 
 INVESTIGATION_PROMPT = """You are a senior threat investigator. Given a triaged security alert, perform a deep investigation and return JSON with:
 
@@ -23,10 +24,8 @@ class InvestigatorAgent:
 
     def __init__(self, llm_client=None, use_mock=False):
         if use_mock:
-            from core.llm import MockLLMClient
             self.llm = MockLLMClient()
         else:
-            from core.llm import LLMClient
             self.llm = llm_client or LLMClient()
 
     def investigate(self, alert: Alert, triage: TriageResult) -> InvestigationResult:
@@ -45,6 +44,7 @@ class InvestigatorAgent:
         )
 
     # TODO: enrich_iocs via VirusTotal/AbuseIPDB
+    # TODO: CloudTrail log correlation
 
     def _build_prompt(self, alert: Alert, triage: TriageResult) -> str:
         return f"""Investigate this triaged security alert:

@@ -186,5 +186,41 @@ def respond(file, alert_id, mock):
     display_response_plan(actions)
 
 
+@cli.command()
+@click.option("--file", "-f", default="samples/sample_alerts.json", help="Path to alerts JSON file")
+@click.option("--mock", is_flag=True, default=True, help="Use mock LLM for demo")
+def pipeline(file, mock):
+    """Run triage -> investigate -> respond on all alerts."""
+    console.print(Panel("[bold]Agentic SOC - Full Pipeline[/bold]", style="magenta"))
+
+    alerts = load_alerts(file)
+    console.print(f"Processing {len(alerts)} alerts\n")
+
+    triage_agent = TriageAgent(use_mock=mock)
+    investigator = InvestigatorAgent(use_mock=mock)
+    responder = ResponderAgent(use_mock=mock)
+
+    console.print("[bold]Phase 1: Triage[/bold]")
+    triage_results = triage_agent.batch_triage(alerts)
+    display_triage_results(triage_results)
+
+    # only investigate critical/high
+    high_alerts = [
+        (a, t) for a, t in zip(alerts, triage_results)
+        if t.assigned_severity in (Severity.CRITICAL, Severity.HIGH)
+    ]
+
+    if high_alerts:
+        console.print(f"\n[bold]Phase 2: Investigating {len(high_alerts)} high-priority alerts[/bold]")
+        for alert, triage_result in high_alerts:
+            investigation = investigator.investigate(alert, triage_result)
+            display_investigation(investigation)
+
+            console.print(f"\n[bold]Phase 3: Response Planning[/bold]")
+            actions = responder.plan_response(alert, investigation)
+            display_response_plan(actions)
+            console.print()
+
+
 if __name__ == "__main__":
     cli()
