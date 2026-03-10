@@ -1,3 +1,5 @@
+![CI](https://github.com/Prakashgode/agentic-soc/actions/workflows/ci.yml/badge.svg)
+
 # Agentic SOC
 
 SOC pipeline that runs triage, investigation, and response on cloud security alerts using an LLM. Pulls from CloudTrail, GuardDuty, and Sentinel.
@@ -86,6 +88,52 @@ agentic-soc/
 │   └── settings.yaml
 ├── main.py
 └── requirements.txt
+```
+
+## Sample Output
+
+```
+$ python main.py pipeline --input samples/sample_alerts.json --mock
+
+Loading 4 alerts from samples/sample_alerts.json...
+
+[TRIAGE] Alert: UnauthorizedAccess:IAMUser/ConsoleLogin
+         Severity: HIGH (score: 8.2)
+         → Forwarding to investigation
+
+[TRIAGE] Alert: S3:BucketPolicyChanged/PublicAccess
+         Severity: CRITICAL (score: 9.5)
+         → Forwarding to investigation
+
+[TRIAGE] Alert: SSH:BruteForce/SuccessfulLogin
+         Severity: HIGH (score: 7.8)
+         → Forwarding to investigation
+
+[TRIAGE] Alert: EC2:SecurityGroupOpened/AllTraffic
+         Severity: MEDIUM (score: 5.4)
+         → Queued for review
+
+[INVESTIGATE] Building timeline for alert CT-2024-001...
+         - 2024-01-15 08:23: Console login from 198.51.100.23 (unusual geo)
+         - 2024-01-15 08:24: IAM policy attachment (AdministratorAccess)
+         - 2024-01-15 08:25: CreateAccessKey for svc-backup-admin
+         → Possible account compromise
+
+[INVESTIGATE] Building timeline for alert GD-2024-002...
+         - 2024-01-15 10:45: PutBucketPolicy on prod-customer-data
+         - 2024-01-15 10:45: Principal set to * (public read)
+         → S3 data exposure confirmed
+
+[RESPOND] Matched playbook: compromised_iam_credentials
+         Action: Disable IAM access keys (dry-run)
+         Action: Revoke active sessions (dry-run)
+         Action: Block source IP 198.51.100.23 (dry-run)
+
+[RESPOND] Matched playbook: s3_public_exposure
+         Action: Revert bucket policy (dry-run)
+         Action: Enable S3 Block Public Access (dry-run)
+
+Pipeline complete: 4 alerts processed, 2 high severity, 1 critical
 ```
 
 ## TODO

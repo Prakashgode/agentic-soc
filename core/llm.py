@@ -63,12 +63,13 @@ class MockLLMClient(LLMClient):
         return self._generate_mock_response(user_prompt)
 
     def analyze_json(self, system_prompt: str, user_prompt: str) -> dict:
-        if "triage" in system_prompt.lower():
-            return self._mock_triage()
-        if "investigat" in system_prompt.lower():
-            return self._mock_investigation()
-        if "respond" in system_prompt.lower() or "playbook" in system_prompt.lower():
+        prompt_lower = system_prompt.lower()
+        if "incident responder" in prompt_lower or "response actions" in prompt_lower:
             return self._mock_response()
+        if "threat investigator" in prompt_lower or "deep investigation" in prompt_lower:
+            return self._mock_investigation()
+        if "triage" in prompt_lower:
+            return self._mock_triage()
         return {"analysis": "Mock analysis complete", "confidence": 0.85}
 
     def _mock_triage(self) -> dict:
