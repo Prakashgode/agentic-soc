@@ -68,3 +68,4 @@ Raw Data:
 {json.dumps(alert.raw_data, indent=2)}
 
 Provide your investigation findings as JSON."""
+# TODO: wire up VT API client here
